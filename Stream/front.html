@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <title>YouTube Short Embed</title>
+</head>
+<body>
+  <div class="hiddenArea">
+    <p id="videoId">{{VideoID}}</p>
+    <p id="videoStart">{{VideoStart}}</p>
+    <p id="videoEnd">{{VideoEnd}}</p>
+  </div>
+  <div id="video-container">
+  </div>
+</body>
+<script>
+  const videoId = document.getElementById('videoId').textContent;
+  const startTime = document.getElementById('videoStart').textContent;
+  const endTime = document.getElementById('videoEnd').textContent;
+
+  let player;
+  let duration = (endTime - startTime) * 1000;
+  let timer;
+
+  // YouTube Iframe APIの準備
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('video-container', {
+      videoId: videoId,
+      playerVars: {
+        'autoplay': 1, // 読み込み時自動再生のオン
+        'controls': 0, // コントロールの非表示
+        'rel': 0, // 関連動画に表示される動画を同チャンネルのものに限定
+      },
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerReady(event) {
+    const videoElm = document.querySelector('iframe');
+    videoElm.classList.add('video');
+    player.seekTo(startTime, true);
+  }
+
+  function scheduleLoop() {
+    clearTimeout(timer);
+
+    timer = setInterval(() => {
+      player.seekTo(startTime, true);
+    }, duration);
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.PLAYING) {
+      scheduleLoop()
+    } else if (event.data === YT.PlayerState.PAUSED) {
+      clearInterval(timer);
+      player.seekTo(startTime, true);
+    }
+  }
+</script>
+</html>

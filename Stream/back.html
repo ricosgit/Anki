@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>English Word Card Design</title>
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="hiddenArea">
+    <p class="input">{{Word/Sentence1}}|{{Pronunciation1}}|{{Meaning1}}</p>
+    <p class="input">{{Word/Sentence2}}|{{Pronunciation2}}|{{Meaning2}}</p>
+    <p class="input">{{Word/Sentence3}}|{{Pronunciation3}}|{{Meaning3}}</p>
+    <p class="input">{{Word/Sentence4}}|{{Pronunciation4}}|{{Meaning4}}</p>
+    <p class="input">{{Word/Sentence5}}|{{Pronunciation5}}|{{Meaning5}}</p>
+  </div>
+  <div id="cards">
+  </div>
+  <button class="button prev disabledButton" onclick="showPrevCard()">◀︎</button>
+  <button class="button next" onclick="showNextCard()">▶︎</button>
+</body>
+<script>
+  let currentIndex = 0;
+  const cards = document.getElementsByClassName("flushCard");
+  const prevBtn = document.querySelector(".prev");
+  const nextBtn = document.querySelector(".next");
+
+  function activateButton() {
+    if (prevBtn.classList.contains("disabledButton")) {
+      prevBtn.classList.remove("disabledButton");
+    } else if (nextBtn.classList.contains("disabledButton")) {
+      nextBtn.classList.remove("disabledButton");
+    }
+  }
+
+  function showPrevCard() {
+    activateButton();
+
+    if (currentIndex > 0) {
+      cards[currentIndex].classList.remove("active");
+      currentIndex--;
+      cards[currentIndex].classList.add("active");
+      console.log(currentIndex);
+
+      if (currentIndex === 0) {
+        prevBtn.classList.add("disabledButton");
+      }
+    }
+  }
+
+  function showNextCard() {
+    activateButton();
+
+    if (currentIndex < cards.length - 1) {
+      cards[currentIndex].classList.remove("active");
+      currentIndex++;
+      cards[currentIndex].classList.add("active");
+
+      if (currentIndex === cards.length - 1) {
+        nextBtn.classList.add("disabledButton");
+      }
+    }
+  }
+
+  function displayWords() {
+    var container = document.getElementById("cards");
+    container.innerHTML = "";
+
+    const inputs = document.getElementsByClassName("input");
+    for (const input of inputs) {
+      if (input.textContent) {
+        let card = document.createElement("div");
+        card.className = "flushCard";
+
+        fields = input.innerHTML.split("|")
+        card.innerHTML = `
+          <div class="word">${fields[0]}</div>
+          <div class="pronunciation">${fields[1]}</div>
+          <div class="meaning">${fields[2]}</div>
+        `;
+        container.appendChild(card);
+      };
+    };
+  };
+
+  setTimeout(function() {
+    displayWords();
+
+    const cards = document.getElementsByClassName("flushCard");
+    cards[currentIndex].classList.add("active");
+  }, 100);
+</script>
+</html>
